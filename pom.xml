@@ -9,6 +9,8 @@
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<guice.version>4.0</guice.version>
 		<guice-multibindings.version>4.0</guice-multibindings.version>
+		<jcommander.version>1.48</jcommander.version>
+		<q-commons.version>0.0.1-SNAPSHOT</q-commons.version>
 	</properties>
 
 	<dependencies>
@@ -22,6 +24,16 @@
 			<groupId>com.google.inject.extensions</groupId>
 			<artifactId>guice-multibindings</artifactId>
 			<version>${guice-multibindings.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>com.beust</groupId>
+			<artifactId>jcommander</artifactId>
+			<version>${jcommander.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>com.pheu.common</groupId>
+			<artifactId>q-commons</artifactId>
+			<version>${q-commons.version}</version>
 		</dependency>
 
 	</dependencies>

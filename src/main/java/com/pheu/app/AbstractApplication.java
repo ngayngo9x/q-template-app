@@ -18,15 +18,24 @@ package com.pheu.app;
 
 import java.util.Collections;
 
+import com.beust.jcommander.Parameter;
 import com.google.inject.Module;
 
 /**
- * A base application class that provides empty implementations of all but the {@link #run()}
- * method.
+ * A base application class that provides empty implementations of all but the
+ * {@link #run()} method.
  */
 public abstract class AbstractApplication implements Application {
-  @Override
-  public Iterable<? extends Module> getModules() {
-    return Collections.emptyList();
-  }
+
+	@Parameter(names = { "-help", "--help" }, description = "Help", help = true)
+	private boolean help = false;
+
+	@Override
+	public Iterable<? extends Module> getModules() {
+		return Collections.emptyList();
+	}
+	
+	public boolean isHelp() {
+		return help;
+	}
 }

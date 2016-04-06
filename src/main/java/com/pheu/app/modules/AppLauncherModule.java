@@ -34,6 +34,7 @@ public class AppLauncherModule extends AbstractModule {
 
   @Override
   protected void configure() {
+	  
     bind(UncaughtExceptionHandler.class).to(LoggingExceptionHandler.class);
   }
 

@@ -9,6 +9,11 @@ import com.pheu.app.core.StartupStage;
 import com.pheu.app.core.Lifecycle;
 import com.pheu.app.commands.ExceptionalCommand;
 import com.pheu.app.modules.AppLauncherModule;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import com.beust.jcommander.JCommander;
 import com.google.common.base.Preconditions;
 import com.google.common.base.Throwables;
 import com.google.common.collect.ImmutableList;
@@ -18,8 +23,6 @@ import com.google.inject.Injector;
 import com.google.inject.Module;
 import com.google.inject.util.Modules;
 import com.pheu.app.modules.LifecycleModule;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 /**
  *
@@ -27,7 +30,7 @@ import java.util.logging.Logger;
  */
 public class AppLauncher {
 
-    private static final Logger LOG = Logger.getLogger(AppLauncher.class.getName());
+    private static final Logger LOGGER = LoggerFactory.getLogger(AppLauncher.class);
 
     @Inject
     @StartupStage
@@ -43,14 +46,14 @@ public class AppLauncher {
         try {
             configureInjection(application);
 
-            LOG.info("Executing startup actions.");
+            LOGGER.error("Executing startup actions.");
             // We're an app framework and this is the outer shell - it makes sense to handle all errors
             // before exiting.
             // SUPPRESS CHECKSTYLE:OFF IllegalCatch
             try {
                 startupCommand.execute();
             } catch (Exception e) {
-                LOG.log(Level.SEVERE, "Startup action failed, quitting.", e);
+            	LOGGER.error("Startup action failed, quitting.", e);
                 throw Throwables.propagate(e);
             }
             // SUPPRESS CHECKSTYLE:ON IllegalCatch
@@ -58,7 +61,7 @@ public class AppLauncher {
             try {
                 application.run();
             } finally {
-                LOG.info("Application run() exited.");
+            	LOGGER.error("Application run() exited.");
             }
         } finally {
             if (lifecycle != null) {
@@ -83,9 +86,19 @@ public class AppLauncher {
     public static void launch(Class<? extends Application> appClass, String... args) {
         Preconditions.checkNotNull(appClass);
         Preconditions.checkNotNull(args);
-
+        
         try {
-            new AppLauncher().run(appClass.newInstance());
+        	Application app =  appClass.newInstance();
+        	try {
+        		JCommander cmd = new JCommander(app, args);
+        		if (((AbstractApplication) app).isHelp()) {
+        			cmd.usage();
+        			return;
+        		}
+        	} catch (Exception ex) {
+        		LOGGER.error("CLI Parser fail: error={}",ex.getMessage());
+        	}
+            new AppLauncher().run(app);
         } catch (InstantiationException | IllegalAccessException e) {
             throw new IllegalStateException(e);
         }
